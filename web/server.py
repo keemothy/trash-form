@@ -39,77 +39,107 @@ else:
 # Load your trained model
 model = tf.keras.models.load_model('../best_garbage_model.h5')
 
-# Enhanced material classification
+# Enhanced material classification with size-based carbon footprint data
 MATERIAL_MAPPING = {
     'battery_training_set': {
         'display_name': 'Battery',
         'icon': '🔋',
         'color': '#FF5A5F',
         'category': 'hazardous',
-        'refund_potential': 'low'
+        'refund_potential': 'low',
+        'carbon_per_kg': {'saved': 12.5, 'landfill': 26.0},  # kg CO2 per kg of material
+        'typical_weight_kg': 0.05,  # typical AA battery weight
+        'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 3.0}  # phone vs car battery
     },
     'biological_training_set': {
         'display_name': 'Organic Waste',
         'icon': '🥬',
         'color': '#00A699',
         'category': 'compostable',
-        'refund_potential': 'none'
+        'refund_potential': 'none',
+        'carbon_per_kg': {'saved': 1.6, 'landfill': 3.2},
+        'typical_weight_kg': 0.2,  # typical food scrap
+        'size_multipliers': {'small': 0.5, 'medium': 1.0, 'large': 2.5}
     },
     'cardboard_training_set': {
         'display_name': 'Cardboard',
         'icon': '📦',
         'color': '#FC642D',
         'category': 'recyclable',
-        'refund_potential': 'medium'
+        'refund_potential': 'medium',
+        'carbon_per_kg': {'saved': 3.3, 'landfill': 0.4},
+        'typical_weight_kg': 0.15,  # typical cardboard box
+        'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 4.0}
     },
     'clothes_training_set': {
         'display_name': 'Textiles',
         'icon': '👕',
         'color': '#484848',
         'category': 'donation',
-        'refund_potential': 'low'
+        'refund_potential': 'low',
+        'carbon_per_kg': {'saved': 15.2, 'landfill': 6.8},
+        'typical_weight_kg': 0.4,  # typical t-shirt
+        'size_multipliers': {'small': 0.4, 'medium': 1.0, 'large': 2.2}
     },
     'glass_training_set': {
         'display_name': 'Glass',
         'icon': '🍷',
         'color': '#00A699',
         'category': 'recyclable',
-        'refund_potential': 'high'
+        'refund_potential': 'high',
+        'carbon_per_kg': {'saved': 0.7, 'landfill': 0.05},
+        'typical_weight_kg': 0.35,  # typical glass bottle
+        'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 2.8}
     },
     'metal_training_set': {
         'display_name': 'Metal',
         'icon': '🥫',
         'color': '#484848',
         'category': 'recyclable',
-        'refund_potential': 'high'
+        'refund_potential': 'high',
+        'carbon_per_kg': {'saved': 19.1, 'landfill': 0.8},
+        'typical_weight_kg': 0.25,  # typical aluminum can
+        'size_multipliers': {'small': 0.2, 'medium': 1.0, 'large': 5.0}
     },
     'paper_training_set': {
         'display_name': 'Paper',
         'icon': '📄',
         'color': '#FC642D',
         'category': 'recyclable',
-        'refund_potential': 'low'
+        'refund_potential': 'low',
+        'carbon_per_kg': {'saved': 3.3, 'landfill': 1.3},
+        'typical_weight_kg': 0.08,  # typical stack of papers
+        'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 3.0}
     },
     'plastic_training_set': {
         'display_name': 'Plastic',
         'icon': '🥤',
         'color': '#FF5A5F',
         'category': 'recyclable',
-        'refund_potential': 'medium'
+        'refund_potential': 'medium',
+        'carbon_per_kg': {'saved': 2.0, 'landfill': 6.0},
+        'typical_weight_kg': 0.12,  # typical plastic bottle
+        'size_multipliers': {'small': 0.2, 'medium': 1.0, 'large': 4.0}
     },
     'shoes_training_set': {
         'display_name': 'Footwear',
         'icon': '👟',
         'color': '#484848',
         'category': 'donation',
-        'refund_potential': 'none'
+        'refund_potential': 'none',
+        'carbon_per_kg': {'saved': 8.0, 'landfill': 4.5},
+        'typical_weight_kg': 0.6,  # typical pair of shoes
+        'size_multipliers': {'small': 0.6, 'medium': 1.0, 'large': 1.8}
     },
     'trash_training_set': {
         'display_name': 'General Waste',
         'icon': '🗑️',
         'color': '#767676',
         'category': 'landfill',
-        'refund_potential': 'none'
+        'refund_potential': 'none',
+        'carbon_per_kg': {'saved': 0.0, 'landfill': 2.1},
+        'typical_weight_kg': 0.1,  # various small items
+        'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 3.0}
     }
 }
 
@@ -365,6 +395,175 @@ def get_sustainability_tips_with_claude(material_type):
         'best_practice': 'Check with local authorities for the best disposal method.'
     }
 
+# Simple analytics storage (in production, use a database)
+import json
+from datetime import datetime
+
+ANALYTICS_FILE = 'recycling_analytics.json'
+
+def load_analytics():
+    """Load analytics data from file"""
+    try:
+        if os.path.exists(ANALYTICS_FILE):
+            with open(ANALYTICS_FILE, 'r') as f:
+                return json.load(f)
+    except:
+        pass
+    return {
+        'total_items': 0,
+        'total_carbon_saved': 0.0,
+        'total_carbon_avoided': 0.0,
+        'items_by_category': {},
+        'items_by_month': {},
+        'sessions': []
+    }
+
+def save_analytics(data):
+    """Save analytics data to file"""
+    try:
+        with open(ANALYTICS_FILE, 'w') as f:
+            json.dump(data, f, indent=2)
+    except Exception as e:
+        print(f"Error saving analytics: {e}")
+
+def update_analytics(material_type, location, estimated_size='medium'):
+    """Update analytics with new recycling action including size estimation"""
+    analytics = load_analytics()
+    material_info = MATERIAL_MAPPING.get(material_type, {})
+    
+    # Calculate carbon impact with size consideration
+    carbon_impact = calculate_carbon_impact_with_size(material_info, estimated_size)
+    carbon_saved = carbon_impact['co2_saved_kg']
+    carbon_avoided = carbon_impact['co2_avoided_kg']
+    
+    # Update totals
+    analytics['total_items'] += 1
+    analytics['total_carbon_saved'] = round(analytics['total_carbon_saved'] + carbon_saved, 2)
+    analytics['total_carbon_avoided'] = round(analytics['total_carbon_avoided'] + carbon_avoided, 2)
+    
+    # Update by category
+    category = material_info.get('category', 'unknown')
+    if category not in analytics['items_by_category']:
+        analytics['items_by_category'][category] = 0
+    analytics['items_by_category'][category] += 1
+    
+    # Update by month
+    current_month = datetime.now().strftime('%Y-%m')
+    if current_month not in analytics['items_by_month']:
+        analytics['items_by_month'][current_month] = 0
+    analytics['items_by_month'][current_month] += 1
+    
+    # Add session data
+    session = {
+        'timestamp': datetime.now().isoformat(),
+        'material': material_info.get('display_name', 'Unknown'),
+        'category': category,
+        'estimated_size': estimated_size,
+        'estimated_weight_kg': carbon_impact['estimated_weight_kg'],
+        'carbon_saved': round(carbon_saved, 2),
+        'carbon_avoided': round(carbon_avoided, 2),
+        'location': location
+    }
+    analytics['sessions'].append(session)
+    
+    # Keep only last 1000 sessions
+    if len(analytics['sessions']) > 1000:
+        analytics['sessions'] = analytics['sessions'][-1000:]
+    
+    save_analytics(analytics)
+    return analytics
+
+def calculate_carbon_impact(material_info):
+    """Calculate carbon footprint impact for a material"""
+    carbon_saved = material_info.get('carbon_saved_kg', 0)
+    carbon_avoided = material_info.get('carbon_cost_landfill', 0)
+    
+    # Calculate equivalent comparisons
+    car_miles_equivalent = (carbon_saved + carbon_avoided) * 2.31  # miles
+    trees_equivalent = (carbon_saved + carbon_avoided) / 21.77  # trees per year
+    
+    return {
+        'co2_saved_kg': round(carbon_saved, 2),
+        'co2_avoided_kg': round(carbon_avoided, 2),
+        'total_impact_kg': round(carbon_saved + carbon_avoided, 2),
+        'car_miles_equivalent': round(car_miles_equivalent, 1),
+        'trees_planted_equivalent': round(trees_equivalent, 2)
+    }
+
+def estimate_item_size_from_image(image_array, material_type):
+    """
+    Estimate item size category from image dimensions and material type
+    This is a simplified estimation - in production, you'd use more sophisticated CV techniques
+    """
+    height, width = image_array.shape[:2]
+    total_pixels = height * width
+    
+    # Get material-specific size thresholds
+    material_info = MATERIAL_MAPPING.get(material_type, {})
+    
+    # Base size estimation on image resolution and material type
+    # These thresholds are rough estimates and would need calibration with real data
+    if material_type in ['battery_training_set', 'paper_training_set']:
+        # Small items by nature
+        if total_pixels < 50000:
+            return 'small'
+        elif total_pixels < 200000:
+            return 'medium'
+        else:
+            return 'large'
+    elif material_type in ['cardboard_training_set', 'plastic_training_set']:
+        # Variable size items
+        if total_pixels < 80000:
+            return 'small'
+        elif total_pixels < 300000:
+            return 'medium'
+        else:
+            return 'large'
+    else:
+        # Default for other materials
+        if total_pixels < 100000:
+            return 'small'
+        elif total_pixels < 250000:
+            return 'medium'
+        else:
+            return 'large'
+
+def calculate_carbon_impact_with_size(material_info, estimated_size='medium'):
+    """Calculate carbon footprint impact for a material with size consideration"""
+    carbon_per_kg = material_info.get('carbon_per_kg', {'saved': 0, 'landfill': 0})
+    typical_weight = material_info.get('typical_weight_kg', 0.1)
+    size_multipliers = material_info.get('size_multipliers', {'small': 0.5, 'medium': 1.0, 'large': 2.0})
+    
+    # Calculate actual estimated weight based on size
+    size_multiplier = size_multipliers.get(estimated_size, 1.0)
+    estimated_weight = typical_weight * size_multiplier
+    
+    # Calculate carbon impact based on estimated weight
+    carbon_saved = carbon_per_kg['saved'] * estimated_weight
+    carbon_avoided = carbon_per_kg['landfill'] * estimated_weight
+    
+    # Calculate equivalent comparisons
+    total_impact = carbon_saved + carbon_avoided
+    car_miles_equivalent = total_impact * 2.31  # miles per kg CO2
+    trees_equivalent = total_impact / 21.77  # kg CO2 per tree per year
+    
+    # Additional environmental metrics
+    energy_saved_kwh = estimated_weight * 2.5  # kWh saved per kg recycled (average)
+    water_saved_liters = estimated_weight * 15  # liters saved per kg recycled (average)
+    
+    return {
+        'co2_saved_kg': round(carbon_saved, 2),
+        'co2_avoided_kg': round(carbon_avoided, 2),
+        'total_impact_kg': round(total_impact, 2),
+        'estimated_weight_kg': round(estimated_weight, 3),
+        'estimated_size': estimated_size,
+        'car_miles_equivalent': round(car_miles_equivalent, 1),
+        'trees_planted_equivalent': round(trees_equivalent, 3),
+        'energy_saved_kwh': round(energy_saved_kwh, 1),
+        'water_saved_liters': round(water_saved_liters, 0),
+        'calculation_method': f"Based on estimated {estimated_size} size ({estimated_weight:.0f}g)"
+    }
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -380,6 +579,7 @@ def predict():
     try:
         # Image processing and prediction
         img = Image.open(file.stream).convert('RGB')
+        original_size = img.size  # Store original dimensions
         img = img.resize((224, 224))
         img_array = np.array(img) / 255.0
         img_array = np.expand_dims(img_array, axis=0)
@@ -388,6 +588,9 @@ def predict():
         # Get prediction results
         pred_class = CLASS_NAMES[np.argmax(preds[0])]
         confidence = float(np.max(preds[0]))
+        
+        # Estimate item size from original image dimensions
+        estimated_size = estimate_item_size_from_image(np.array(Image.open(file.stream).convert('RGB')), pred_class)
         
         # Get material info
         material_info = MATERIAL_MAPPING[pred_class]
@@ -404,6 +607,9 @@ def predict():
         
         # Get sustainability tips using Claude API
         tips = get_sustainability_tips_with_claude(pred_class)
+        
+        # Update analytics with this action (including size estimation)
+        update_analytics(pred_class, f"{location_info['city']}, {location_info['region']}", estimated_size)
         
         # Response structure
         response = {
@@ -435,6 +641,9 @@ def predict():
                 'action_required': tips['action'],
                 'best_practice': tips['best_practice']
             },
+            
+            # 4. Carbon Footprint Impact (with size consideration)
+            'carbon_impact': calculate_carbon_impact_with_size(material_info, estimated_size),
             
             # Additional features
             'features': {
@@ -508,6 +717,106 @@ def health_check():
         'model_loaded': model is not None,
         'timestamp': datetime.now().isoformat()
     })
+
+@app.route('/analytics', methods=['GET'])
+def get_analytics():
+    """Get recycling analytics and carbon footprint data"""
+    try:
+        analytics = load_analytics()
+        
+        # Calculate additional metrics
+        total_impact = analytics['total_carbon_saved'] + analytics['total_carbon_avoided']
+        car_miles = total_impact * 2.31
+        trees_planted = total_impact / 21.77
+        
+        # Get recent activity (last 30 days)
+        recent_sessions = []
+        thirty_days_ago = (datetime.now() - timedelta(days=30)).isoformat()
+        
+        for session in analytics['sessions']:
+            if session['timestamp'] > thirty_days_ago:
+                recent_sessions.append(session)
+        
+        # Top categories
+        top_categories = sorted(
+            analytics['items_by_category'].items(), 
+            key=lambda x: x[1], 
+            reverse=True
+        )[:5]
+        
+        response = {
+            'summary': {
+                'total_items_recycled': analytics['total_items'],
+                'total_co2_saved_kg': round(analytics['total_carbon_saved'], 2),
+                'total_co2_avoided_kg': round(analytics['total_carbon_avoided'], 2),
+                'total_environmental_impact_kg': round(total_impact, 2),
+                'equivalent_car_miles': round(car_miles, 1),
+                'equivalent_trees_planted': round(trees_planted, 2)
+            },
+            'recent_activity': {
+                'last_30_days': len(recent_sessions),
+                'sessions': recent_sessions[-10:]  # Last 10 sessions
+            },
+            'breakdowns': {
+                'by_category': dict(top_categories),
+                'by_month': analytics['items_by_month']
+            },
+            'achievements': generate_achievements(analytics),
+            'projections': calculate_projections(analytics)
+        }
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def generate_achievements(analytics):
+    """Generate achievement badges based on recycling activity"""
+    achievements = []
+    
+    total_items = analytics['total_items']
+    total_impact = analytics['total_carbon_saved'] + analytics['total_carbon_avoided']
+    
+    # Item-based achievements
+    if total_items >= 1:
+        achievements.append({'name': 'First Step', 'icon': '🌱', 'description': 'Recycled your first item!'})
+    if total_items >= 10:
+        achievements.append({'name': 'Eco Warrior', 'icon': '♻️', 'description': 'Recycled 10+ items'})
+    if total_items >= 50:
+        achievements.append({'name': 'Green Champion', 'icon': '🏆', 'description': 'Recycled 50+ items'})
+    if total_items >= 100:
+        achievements.append({'name': 'Sustainability Master', 'icon': '🌍', 'description': 'Recycled 100+ items'})
+    
+    # Carbon impact achievements
+    if total_impact >= 10:
+        achievements.append({'name': 'Carbon Saver', 'icon': '🌬️', 'description': 'Saved 10+ kg CO2'})
+    if total_impact >= 50:
+        achievements.append({'name': 'Climate Hero', 'icon': '🦸', 'description': 'Saved 50+ kg CO2'})
+    
+    # Category diversity
+    if len(analytics['items_by_category']) >= 5:
+        achievements.append({'name': 'Recycling Expert', 'icon': '🎯', 'description': 'Recycled 5+ different material types'})
+    
+    return achievements
+
+def calculate_projections(analytics):
+    """Calculate yearly projections based on current activity"""
+    if not analytics['sessions']:
+        return {'yearly_items': 0, 'yearly_co2_impact': 0}
+    
+    # Calculate average per month from recent activity
+    recent_months = list(analytics['items_by_month'].keys())[-3:]  # Last 3 months
+    if not recent_months:
+        return {'yearly_items': 0, 'yearly_co2_impact': 0}
+    
+    avg_monthly_items = sum(analytics['items_by_month'].get(month, 0) for month in recent_months) / len(recent_months)
+    avg_monthly_co2 = (analytics['total_carbon_saved'] + analytics['total_carbon_avoided']) / len(recent_months)
+    
+    return {
+        'yearly_items': round(avg_monthly_items * 12),
+        'yearly_co2_impact': round(avg_monthly_co2 * 12, 2),
+        'message': f"At your current pace, you'll recycle {round(avg_monthly_items * 12)} items and save {round(avg_monthly_co2 * 12, 2)} kg CO2 this year!"
+    }
 
 if __name__ == '__main__':
     app.run(debug=True, port=9000)

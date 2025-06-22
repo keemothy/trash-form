@@ -1,0 +1,215 @@
+{
+  "total_items": 21,
+  "total_carbon_saved": 51.29,
+  "total_carbon_avoided": 41.37,
+  "items_by_category": {
+    "recyclable": 17,
+    "donation": 3,
+    "hazardous": 1
+  },
+  "items_by_month": {
+    "2025-06": 21
+  },
+  "sessions": [
+    {
+      "timestamp": "2025-06-22T06:54:17.092699",
+      "material": "Plastic",
+      "category": "recyclable",
+      "carbon_saved": 1.8,
+      "carbon_avoided": 1.2,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T06:55:06.159015",
+      "material": "Plastic",
+      "category": "recyclable",
+      "carbon_saved": 1.8,
+      "carbon_avoided": 1.2,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T06:55:58.667338",
+      "material": "Cardboard",
+      "category": "recyclable",
+      "carbon_saved": 3.3,
+      "carbon_avoided": 0.4,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T06:57:20.282354",
+      "material": "Plastic",
+      "category": "recyclable",
+      "carbon_saved": 1.8,
+      "carbon_avoided": 1.2,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T06:58:45.298868",
+      "material": "Cardboard",
+      "category": "recyclable",
+      "carbon_saved": 3.3,
+      "carbon_avoided": 0.4,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T07:05:05.281779",
+      "material": "Cardboard",
+      "category": "recyclable",
+      "estimated_size": "small",
+      "estimated_weight_kg": 0.045,
+      "carbon_saved": 0.15,
+      "carbon_avoided": 0.02,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T07:05:27.323946",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.48,
+      "carbon_saved": 0.96,
+      "carbon_avoided": 2.88,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:30:52.002114",
+      "material": "Cardboard",
+      "category": "recyclable",
+      "estimated_size": "small",
+      "estimated_weight_kg": 0.045,
+      "carbon_saved": 0.15,
+      "carbon_avoided": 0.02,
+      "location": "Albany, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:31:41.424211",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "medium",
+      "estimated_weight_kg": 0.12,
+      "carbon_saved": 0.24,
+      "carbon_avoided": 0.72,
+      "location": "Davis, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:34:22.172960",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "medium",
+      "estimated_weight_kg": 0.12,
+      "carbon_saved": 0.24,
+      "carbon_avoided": 0.72,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:38:01.342608",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.48,
+      "carbon_saved": 0.96,
+      "carbon_avoided": 2.88,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:39:54.094520",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.48,
+      "carbon_saved": 0.96,
+      "carbon_avoided": 2.88,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:40:34.631931",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "medium",
+      "estimated_weight_kg": 0.12,
+      "carbon_saved": 0.24,
+      "carbon_avoided": 0.72,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:41:33.313877",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "medium",
+      "estimated_weight_kg": 0.12,
+      "carbon_saved": 0.24,
+      "carbon_avoided": 0.72,
+      "location": "Austin, Texas"
+    },
+    {
+      "timestamp": "2025-06-22T10:45:31.430881",
+      "material": "Footwear",
+      "category": "donation",
+      "estimated_size": "large",
+      "estimated_weight_kg": 1.08,
+      "carbon_saved": 8.64,
+      "carbon_avoided": 4.86,
+      "location": "Austin, Texas"
+    },
+    {
+      "timestamp": "2025-06-22T10:46:14.462319",
+      "material": "Footwear",
+      "category": "donation",
+      "estimated_size": "large",
+      "estimated_weight_kg": 1.08,
+      "carbon_saved": 8.64,
+      "carbon_avoided": 4.86,
+      "location": "Austin, Texas"
+    },
+    {
+      "timestamp": "2025-06-22T10:47:42.305849",
+      "material": "Battery",
+      "category": "hazardous",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.15,
+      "carbon_saved": 1.88,
+      "carbon_avoided": 3.9,
+      "location": "Albany, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:49:14.524730",
+      "material": "Glass",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.98,
+      "carbon_saved": 0.69,
+      "carbon_avoided": 0.05,
+      "location": "Albany, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:50:02.623605",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.48,
+      "carbon_saved": 0.96,
+      "carbon_avoided": 2.88,
+      "location": "Albany, California"
+    },
+    {
+      "timestamp": "2025-06-22T10:52:34.164743",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.48,
+      "carbon_saved": 0.96,
+      "carbon_avoided": 2.88,
+      "location": "Seattle, Washington"
+    },
+    {
+      "timestamp": "2025-06-22T11:00:05.100752",
+      "material": "Textiles",
+      "category": "donation",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.88,
+      "carbon_saved": 13.38,
+      "carbon_avoided": 5.98,
+      "location": "Portland, Oregon"
+    }
+  ]
+}
