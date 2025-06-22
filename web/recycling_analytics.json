@@ -1,14 +1,14 @@
 {
-  "total_items": 28,
-  "total_carbon_saved": 59.41,
-  "total_carbon_avoided": 57.8,
+  "total_items": 29,
+  "total_carbon_saved": 59.62,
+  "total_carbon_avoided": 58.18,
   "items_by_category": {
-    "recyclable": 21,
+    "recyclable": 22,
     "donation": 4,
     "hazardous": 3
   },
   "items_by_month": {
-    "2025-06": 28
+    "2025-06": 29
   },
   "sessions": [
     {
@@ -280,6 +280,16 @@
       "carbon_saved": 0.93,
       "carbon_avoided": 2.77,
       "location": "Portland, Oregon"
+    },
+    {
+      "timestamp": "2025-06-22T11:46:41.692521",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.12,
+      "carbon_saved": 0.21,
+      "carbon_avoided": 0.38,
+      "location": "New York, New York"
     }
   ]
 }
