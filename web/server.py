@@ -39,7 +39,8 @@ else:
 # Load your trained model
 model = tf.keras.models.load_model('../best_garbage_model.h5')
 
-# Enhanced material classification with size-based carbon footprint data
+# Enhanced material classification with realistic carbon footprint data
+# Carbon data sources: EPA, Ellen MacArthur Foundation, Carbon Trust studies
 MATERIAL_MAPPING = {
     'battery_training_set': {
         'display_name': 'Battery',
@@ -47,7 +48,7 @@ MATERIAL_MAPPING = {
         'color': '#FF5A5F',
         'category': 'hazardous',
         'refund_potential': 'low',
-        'carbon_per_kg': {'saved': 12.5, 'landfill': 26.0},  # kg CO2 per kg of material
+        'carbon_per_kg': {'saved': 6.2, 'landfill': 18.5},  # Li-ion recycling vs mining
         'typical_weight_kg': 0.05,  # typical AA battery weight
         'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 3.0}  # phone vs car battery
     },
@@ -57,7 +58,7 @@ MATERIAL_MAPPING = {
         'color': '#00A699',
         'category': 'compostable',
         'refund_potential': 'none',
-        'carbon_per_kg': {'saved': 1.6, 'landfill': 3.2},
+        'carbon_per_kg': {'saved': 0.5, 'landfill': 1.8},  # Composting vs methane emissions
         'typical_weight_kg': 0.2,  # typical food scrap
         'size_multipliers': {'small': 0.5, 'medium': 1.0, 'large': 2.5}
     },
@@ -67,7 +68,7 @@ MATERIAL_MAPPING = {
         'color': '#FC642D',
         'category': 'recyclable',
         'refund_potential': 'medium',
-        'carbon_per_kg': {'saved': 3.3, 'landfill': 0.4},
+        'carbon_per_kg': {'saved': 1.1, 'landfill': 0.3},  # Recycled vs virgin paper
         'typical_weight_kg': 0.15,  # typical cardboard box
         'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 4.0}
     },
@@ -77,17 +78,17 @@ MATERIAL_MAPPING = {
         'color': '#484848',
         'category': 'donation',
         'refund_potential': 'low',
-        'carbon_per_kg': {'saved': 15.2, 'landfill': 6.8},
+        'carbon_per_kg': {'saved': 3.6, 'landfill': 2.1},  # Reuse vs new textile production
         'typical_weight_kg': 0.4,  # typical t-shirt
         'size_multipliers': {'small': 0.4, 'medium': 1.0, 'large': 2.2}
-    },
+    },  
     'glass_training_set': {
         'display_name': 'Glass',
         'icon': '🍷',
         'color': '#00A699',
         'category': 'recyclable',
         'refund_potential': 'high',
-        'carbon_per_kg': {'saved': 0.7, 'landfill': 0.05},
+        'carbon_per_kg': {'saved': 0.31, 'landfill': 0.02},  # Glass recycling energy savings
         'typical_weight_kg': 0.35,  # typical glass bottle
         'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 2.8}
     },
@@ -97,8 +98,8 @@ MATERIAL_MAPPING = {
         'color': '#484848',
         'category': 'recyclable',
         'refund_potential': 'high',
-        'carbon_per_kg': {'saved': 19.1, 'landfill': 0.8},
-        'typical_weight_kg': 0.25,  # typical aluminum can
+        'carbon_per_kg': {'saved': 1.47, 'landfill': 0.12},  # Aluminum: 95% energy savings
+        'typical_weight_kg': 0.015,  # typical aluminum can (15g)
         'size_multipliers': {'small': 0.2, 'medium': 1.0, 'large': 5.0}
     },
     'paper_training_set': {
@@ -107,7 +108,7 @@ MATERIAL_MAPPING = {
         'color': '#FC642D',
         'category': 'recyclable',
         'refund_potential': 'low',
-        'carbon_per_kg': {'saved': 3.3, 'landfill': 1.3},
+        'carbon_per_kg': {'saved': 1.38, 'landfill': 0.98},  # Paper recycling vs virgin pulp
         'typical_weight_kg': 0.08,  # typical stack of papers
         'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 3.0}
     },
@@ -117,8 +118,8 @@ MATERIAL_MAPPING = {
         'color': '#FF5A5F',
         'category': 'recyclable',
         'refund_potential': 'medium',
-        'carbon_per_kg': {'saved': 2.0, 'landfill': 6.0},
-        'typical_weight_kg': 0.12,  # typical plastic bottle
+        'carbon_per_kg': {'saved': 1.76, 'landfill': 3.14},  # PET recycling vs new production
+        'typical_weight_kg': 0.03,  # typical plastic bottle (30g)
         'size_multipliers': {'small': 0.2, 'medium': 1.0, 'large': 4.0}
     },
     'shoes_training_set': {
@@ -127,7 +128,7 @@ MATERIAL_MAPPING = {
         'color': '#484848',
         'category': 'donation',
         'refund_potential': 'none',
-        'carbon_per_kg': {'saved': 8.0, 'landfill': 4.5},
+        'carbon_per_kg': {'saved': 2.8, 'landfill': 1.2},  # Shoe reuse vs new production
         'typical_weight_kg': 0.6,  # typical pair of shoes
         'size_multipliers': {'small': 0.6, 'medium': 1.0, 'large': 1.8}
     },
@@ -137,7 +138,7 @@ MATERIAL_MAPPING = {
         'color': '#767676',
         'category': 'landfill',
         'refund_potential': 'none',
-        'carbon_per_kg': {'saved': 0.0, 'landfill': 2.1},
+        'carbon_per_kg': {'saved': 0.0, 'landfill': 0.67},  # Landfill methane emissions
         'typical_weight_kg': 0.1,  # various small items
         'size_multipliers': {'small': 0.3, 'medium': 1.0, 'large': 3.0}
     }
@@ -529,7 +530,7 @@ def estimate_item_size_from_image(image_array, material_type):
             return 'large'
 
 def calculate_carbon_impact_with_size(material_info, estimated_size='medium'):
-    """Calculate carbon footprint impact for a material with size consideration"""
+    """Calculate realistic carbon footprint impact for a material with size consideration"""
     carbon_per_kg = material_info.get('carbon_per_kg', {'saved': 0, 'landfill': 0})
     typical_weight = material_info.get('typical_weight_kg', 0.1)
     size_multipliers = material_info.get('size_multipliers', {'small': 0.5, 'medium': 1.0, 'large': 2.0})
@@ -541,27 +542,76 @@ def calculate_carbon_impact_with_size(material_info, estimated_size='medium'):
     # Calculate carbon impact based on estimated weight
     carbon_saved = carbon_per_kg['saved'] * estimated_weight
     carbon_avoided = carbon_per_kg['landfill'] * estimated_weight
-    
-    # Calculate equivalent comparisons
     total_impact = carbon_saved + carbon_avoided
-    car_miles_equivalent = total_impact * 2.31  # miles per kg CO2
-    trees_equivalent = total_impact / 21.77  # kg CO2 per tree per year
     
-    # Additional environmental metrics
-    energy_saved_kwh = estimated_weight * 2.5  # kWh saved per kg recycled (average)
-    water_saved_liters = estimated_weight * 15  # liters saved per kg recycled (average)
+    # More realistic equivalent calculations based on research data
+    # Source: EPA, Carbon Trust, various environmental studies
+    
+    # Car miles: Average car emits 0.404 kg CO2 per mile (EPA 2023)
+    car_miles_equivalent = total_impact / 0.404
+    
+    # Trees: A mature tree absorbs about 22 kg CO2 per year
+    # So we calculate what fraction of a tree's annual absorption this represents
+    tree_days_equivalent = (total_impact / 22) * 365  # days worth of tree absorption
+    
+    # Material-specific environmental benefits
+    material_type = material_info.get('display_name', '').lower()
+    
+    # Energy savings (kWh) - based on actual recycling energy savings
+    energy_multipliers = {
+        'aluminum': 95,   # Recycling aluminum saves 95% of energy vs new production
+        'metal': 74,      # Steel recycling saves 74% energy
+        'plastic': 88,    # Plastic recycling saves 88% energy  
+        'glass': 30,      # Glass recycling saves 30% energy
+        'paper': 60,      # Paper recycling saves 60% energy
+        'cardboard': 24,  # Cardboard recycling saves 24% energy
+    }
+    
+    # Water savings (liters) - based on production water usage
+    water_multipliers = {
+        'aluminum': 1800,  # L per kg - aluminum production is very water intensive
+        'metal': 280,      # L per kg - steel production water usage
+        'plastic': 185,    # L per kg - plastic production water usage
+        'glass': 120,      # L per kg - glass production water usage
+        'paper': 60,       # L per kg - paper production water usage
+        'cardboard': 50,   # L per kg - cardboard production water usage
+    }
+    
+    # Get material-specific multipliers
+    energy_factor = energy_multipliers.get(material_type, 40)  # default 40% energy savings
+    water_factor = water_multipliers.get(material_type, 100)   # default 100L per kg
+    
+    energy_saved_kwh = estimated_weight * (energy_factor / 100) * 8.5  # 8.5 kWh avg per kg material production
+    water_saved_liters = estimated_weight * water_factor
+    
+    # Format the results more meaningfully
+    def format_tree_impact(days):
+        if days >= 365:
+            years = days / 365
+            return f"{years:.1f} tree-years"
+        elif days >= 30:
+            months = days / 30
+            return f"{months:.1f} tree-months"
+        elif days >= 7:
+            weeks = days / 7
+            return f"{weeks:.1f} tree-weeks"
+        else:
+            return f"{days:.0f} tree-days"
+    
+    # Create a more informative calculation method
+    impact_level = "significant" if total_impact > 1.0 else "moderate" if total_impact > 0.1 else "small but meaningful"
     
     return {
-        'co2_saved_kg': round(carbon_saved, 2),
-        'co2_avoided_kg': round(carbon_avoided, 2),
-        'total_impact_kg': round(total_impact, 2),
+        'co2_saved_kg': round(carbon_saved, 3),
+        'co2_avoided_kg': round(carbon_avoided, 3),
+        'total_impact_kg': round(total_impact, 3),
         'estimated_weight_kg': round(estimated_weight, 3),
         'estimated_size': estimated_size,
-        'car_miles_equivalent': round(car_miles_equivalent, 1),
-        'trees_planted_equivalent': round(trees_equivalent, 3),
-        'energy_saved_kwh': round(energy_saved_kwh, 1),
+        'car_miles_equivalent': round(car_miles_equivalent, 2),
+        'trees_planted_equivalent': format_tree_impact(tree_days_equivalent),
+        'energy_saved_kwh': round(energy_saved_kwh, 2),
         'water_saved_liters': round(water_saved_liters, 0),
-        'calculation_method': f"Based on estimated {estimated_size} size ({estimated_weight:.0f}g)"
+        'calculation_method': f"Realistic impact assessment: {impact_level} environmental benefit from {estimated_size} {material_type} ({int(estimated_weight*1000)}g)"
     }
 
 @app.route('/')

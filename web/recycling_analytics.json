@@ -1,14 +1,14 @@
 {
-  "total_items": 21,
-  "total_carbon_saved": 51.29,
-  "total_carbon_avoided": 41.37,
+  "total_items": 28,
+  "total_carbon_saved": 59.41,
+  "total_carbon_avoided": 57.8,
   "items_by_category": {
-    "recyclable": 17,
-    "donation": 3,
-    "hazardous": 1
+    "recyclable": 21,
+    "donation": 4,
+    "hazardous": 3
   },
   "items_by_month": {
-    "2025-06": 21
+    "2025-06": 28
   },
   "sessions": [
     {
@@ -209,6 +209,76 @@
       "estimated_weight_kg": 0.88,
       "carbon_saved": 13.38,
       "carbon_avoided": 5.98,
+      "location": "Portland, Oregon"
+    },
+    {
+      "timestamp": "2025-06-22T11:28:17.269715",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.48,
+      "carbon_saved": 0.96,
+      "carbon_avoided": 2.88,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T11:36:32.337921",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.48,
+      "carbon_saved": 0.96,
+      "carbon_avoided": 2.88,
+      "location": "Davis, California"
+    },
+    {
+      "timestamp": "2025-06-22T11:38:18.855750",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.48,
+      "carbon_saved": 0.96,
+      "carbon_avoided": 2.88,
+      "location": "Davis, California"
+    },
+    {
+      "timestamp": "2025-06-22T11:42:23.121481",
+      "material": "Plastic",
+      "category": "recyclable",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.12,
+      "carbon_saved": 0.21,
+      "carbon_avoided": 0.38,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T11:43:00.239109",
+      "material": "Textiles",
+      "category": "donation",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.88,
+      "carbon_saved": 3.17,
+      "carbon_avoided": 1.85,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T11:43:47.253841",
+      "material": "Battery",
+      "category": "hazardous",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.15,
+      "carbon_saved": 0.93,
+      "carbon_avoided": 2.77,
+      "location": "Berkeley, California"
+    },
+    {
+      "timestamp": "2025-06-22T11:43:48.480366",
+      "material": "Battery",
+      "category": "hazardous",
+      "estimated_size": "large",
+      "estimated_weight_kg": 0.15,
+      "carbon_saved": 0.93,
+      "carbon_avoided": 2.77,
       "location": "Portland, Oregon"
     }
   ]

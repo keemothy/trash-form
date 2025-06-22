@@ -1018,12 +1018,19 @@
                         <div class="carbon-impact-info">
                             <div class="section-title">
                                 <i class="fas fa-leaf" style="color: #4CAF50;"></i>
-                                Environmental Impact
+                                Environmental Impact Analysis
                             </div>
-                            <div style="margin-bottom: 12px; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 0.85rem; color: var(--airbnb-gray-light);">
-                                ${carbon_impact.calculation_method}
+                            <div style="margin-bottom: 16px; padding: 12px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 8px; border-left: 4px solid #4CAF50;">
+                                <div style="font-size: 0.9rem; color: var(--airbnb-gray-dark); font-weight: 600; margin-bottom: 6px;">
+                                    <i class="fas fa-calculator" style="margin-right: 6px; color: #4CAF50;"></i>
+                                    How we calculate impact:
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--airbnb-gray-light); line-height: 1.4;">
+                                    ${carbon_impact.calculation_method}
+                                </div>
                             </div>
-                            <div class="impact-cards">
+                            <div class="impact-cards">${
+                                carbon_impact.total_impact_kg > 0 ? `
                                 <div class="impact-card">
                                     <div class="impact-icon">⚖️</div>
                                     <div class="impact-details">
@@ -1035,38 +1042,46 @@
                                     <div class="impact-icon">🌍</div>
                                     <div class="impact-details">
                                         <h4>${carbon_impact.total_impact_kg} kg CO₂</h4>
-                                        <p>Total environmental impact</p>
+                                        <p>Total environmental benefit</p>
                                     </div>
                                 </div>
                                 <div class="impact-card">
                                     <div class="impact-icon">🚗</div>
                                     <div class="impact-details">
                                         <h4>${carbon_impact.car_miles_equivalent} miles</h4>
-                                        <p>Equivalent car travel saved</p>
+                                        <p>Car travel emissions avoided</p>
                                     </div>
                                 </div>
                                 <div class="impact-card">
                                     <div class="impact-icon">🌳</div>
                                     <div class="impact-details">
                                         <h4>${carbon_impact.trees_planted_equivalent}</h4>
-                                        <p>Trees planted equivalent</p>
+                                        <p>Tree carbon absorption equivalent</p>
                                     </div>
                                 </div>
                                 <div class="impact-card">
                                     <div class="impact-icon">⚡</div>
                                     <div class="impact-details">
                                         <h4>${carbon_impact.energy_saved_kwh} kWh</h4>
-                                        <p>Energy saved by recycling</p>
+                                        <p>Energy saved through recycling</p>
                                     </div>
                                 </div>
                                 <div class="impact-card">
                                     <div class="impact-icon">💧</div>
                                     <div class="impact-details">
                                         <h4>${carbon_impact.water_saved_liters} L</h4>
-                                        <p>Water saved by recycling</p>
+                                        <p>Water saved through recycling</p>
                                     </div>
                                 </div>
-                            </div>
+                                ` : `
+                                <div class="impact-card" style="grid-column: 1 / -1; text-align: center; padding: 24px;">
+                                    <div style="color: var(--airbnb-gray-light); font-size: 1rem;">
+                                        <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 12px; display: block;"></i>
+                                        This item should go to landfill. While recycling isn't possible, proper disposal prevents environmental harm.
+                                    </div>
+                                </div>
+                                `
+                            }</div>
                         </div>
                         
                         <!-- Trash Can Type -->
@@ -1322,11 +1337,11 @@
                                 </div>
                             </div>
                         `).join('') : 
-                        '<div class="empty-state">
+                        `<div class="empty-state">
                             <i class="fas fa-leaf"></i>
                             <p>No recent activity</p>
                             <small>Start recycling to see your activity here!</small>
-                        </div>'
+                        </div>`
                     }
                 </div>
 
