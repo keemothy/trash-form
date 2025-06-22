@@ -182,6 +182,7 @@ def get_recycling_centers_with_claude(material_type, location_info):
         message = claude_client.messages.create(
             model="claude-3-5-sonnet-20241022",
             max_tokens=1000,
+            temperature=0.7,  # Add some randomness for varied center suggestions
             messages=[{"role": "user", "content": prompt}]
         )
         
@@ -260,21 +261,30 @@ def get_sustainability_tips_with_claude(material_type):
     
     material_name = MATERIAL_MAPPING[material_type]['display_name']
     
-    prompt = f"""Generate sustainability tips for {material_name} recycling. 
+    # Add randomness to get different tips each time
+    import random
+    perspectives = [
+        "environmental impact", "economic benefits", "surprising facts", 
+        "global statistics", "local impact", "innovation and technology"
+    ]
+    perspective = random.choice(perspectives)
+    
+    prompt = f"""Generate unique sustainability tips for {material_name} recycling with a focus on {perspective}. 
     
     Please provide a JSON response with this exact format:
     {{
-        "tip": "An interesting 'Did you know?' fact about {material_name}",
-        "action": "Specific action the user should take before recycling",
-        "best_practice": "A helpful best practice tip for maximum impact"
+        "tip": "A fascinating and specific 'Did you know?' fact about {material_name} that most people don't know",
+        "action": "A concrete, actionable step the user should take before recycling this {material_name}",
+        "best_practice": "An expert-level best practice tip for maximum environmental or economic impact"
     }}
     
-    Keep each field to one sentence and make them practical and actionable."""
+    Make each tip unique, specific, and surprising. Avoid generic advice. Include specific numbers, statistics, or little-known facts when possible. Each response should feel fresh and educational."""
     
     try:
         message = claude_client.messages.create(
             model="claude-3-5-sonnet-20241022",
             max_tokens=500,
+            temperature=0.8,  # Higher temperature for more creative/varied responses
             messages=[{"role": "user", "content": prompt}]
         )
         

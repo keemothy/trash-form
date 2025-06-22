@@ -27,7 +27,7 @@
 
         body {
             font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: white;
             min-height: 100vh;
             color: var(--airbnb-gray-dark);
         }
@@ -40,19 +40,31 @@
 
         .header {
             text-align: center;
-            color: white;
+            color: var(--airbnb-gray-dark);
             margin-bottom: 40px;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            max-width: 200px;
+            height: auto;
+            background: transparent;
         }
 
         .header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 8px;
+            color: var(--airbnb-gray-dark);
         }
 
         .header p {
             font-size: 1.1rem;
             opacity: 0.9;
+            color: var(--airbnb-gray-dark);
         }
 
         .upload-card {
@@ -268,6 +280,70 @@
             margin-bottom: 8px;
         }
 
+        .trash-can-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .trash-can-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .trash-can-icon {
+            font-size: 2.5rem;
+        }
+
+        .trash-can-details h4 {
+            margin-bottom: 4px;
+            font-size: 1.1rem;
+        }
+
+        .trash-can-details p {
+            color: var(--airbnb-gray-light);
+            font-size: 0.9rem;
+        }
+
+        .location-info {
+            background: var(--airbnb-gray-lightest);
+            padding: 16px 24px;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+
+        .center-actions {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-directions {
+            background: var(--airbnb-teal);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-directions:hover {
+            background: #008A7A;
+            transform: translateY(-1px);
+        }
+
         .loading {
             display: flex;
             align-items: center;
@@ -311,12 +387,19 @@
             .center-details {
                 grid-template-columns: 1fr;
             }
+
+            .logo {
+                max-width: 150px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="RecycleBnB Logo" class="logo">
+            </div>
             <h1>♻️ RecycleBnB</h1>
             <p>Smart recycling assistant</p>
         </div>
@@ -443,6 +526,8 @@
 
         function showResults(data) {
             const { identification, locations, insights } = data;
+            console.log('Received data:', data);
+            console.log('Category:', identification.category);
             
             resultsContainer.innerHTML = `
                 <!-- Material Identification -->
@@ -460,6 +545,31 @@
                         <p style="margin-top: 16px; color: var(--airbnb-gray-light);">
                             ${identification.message}
                         </p>
+                        
+                        <!-- Trash Can Type -->
+                        <div class="trash-can-info">
+                            <div class="section-title">
+                                <i class="fas fa-trash-alt"></i>
+                                Disposal Method
+                            </div>
+                            <div class="trash-can-card">
+                                <div class="trash-can-icon" style="color: ${getTrashCanColor(identification.category)}">
+                                    ${getTrashCanIcon(identification.category)}
+                                </div>
+                                <div class="trash-can-details">
+                                    <h4>${getTrashCanType(identification.category)}</h4>
+                                    <p>${getTrashCanInstructions(identification.category)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Location -->
+                    <div class="location-info">
+                        <div class="section-title">
+                            <i class="fas fa-location-arrow"></i>
+                            Your Location: ${locations.user_location}
+                        </div>
                     </div>
                     
                     <!-- Recycling Centers -->
@@ -497,6 +607,11 @@
                                         </div>
                                     ` : ''}
                                 </div>
+                                <div class="center-actions">
+                                    <button class="btn-directions" onclick="getDirections('${center.address.replace(/'/g, "\\'")}')">
+                                        <i class="fas fa-directions"></i> Get Directions
+                                    </button>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
@@ -525,6 +640,79 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Trash can type functions
+        function getTrashCanIcon(category) {
+            console.log('Getting icon for category:', category);
+            const icons = {
+                'recyclable': '♻️',
+                'compostable': '🌱', 
+                'hazardous': '⚠️',
+                'donation': '💝',
+                'landfill': '🗑️'
+            };
+            return icons[category] || '🗑️';
+        }
+
+        function getTrashCanColor(category) {
+            console.log('Getting color for category:', category);
+            const colors = {
+                'recyclable': '#00A699',
+                'compostable': '#4CAF50',
+                'hazardous': '#FF5722', 
+                'donation': '#9C27B0',
+                'landfill': '#757575'
+            };
+            return colors[category] || '#757575';
+        }
+
+        function getTrashCanType(category) {
+            console.log('Getting type for category:', category);
+            const types = {
+                'recyclable': 'Blue Recycling Bin',
+                'compostable': 'Green Compost Bin',
+                'hazardous': 'Hazardous Waste Drop-off',
+                'donation': 'Donation Box/Center', 
+                'landfill': 'Black/Gray Trash Bin'
+            };
+            return types[category] || 'General Waste Bin';
+        }
+
+        function getTrashCanInstructions(category) {
+            console.log('Getting instructions for category:', category);
+            const instructions = {
+                'recyclable': 'Clean item and place in your blue recycling bin',
+                'compostable': 'Add to your green organics/compost bin',
+                'hazardous': 'Take to a hazardous waste facility - NEVER put in regular trash!',
+                'donation': 'Take to a donation center, thrift store, or clothing drop-off',
+                'landfill': 'Place in your regular black or gray trash bin'
+            };
+            return instructions[category] || 'Check with local waste management for proper disposal instructions';
+        }
+
+        // Directions function
+        function getDirections(address) {
+            const encodedAddress = encodeURIComponent(address);
+            
+            // Detect if user is on mobile device
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Try to open in Apple Maps on iOS, Google Maps on Android
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                
+                if (isIOS) {
+                    // Apple Maps
+                    window.open(`http://maps.apple.com/?daddr=${encodedAddress}`, '_blank');
+                } else {
+                    // Google Maps mobile
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`, '_blank');
+                }
+            } else {
+                // Desktop - use Google Maps
+                window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`, '_blank');
+            }
         }
     </script>
 </body>

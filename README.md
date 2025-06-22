@@ -1,0 +1,1 @@
+Run `start.sh` to start the project.
