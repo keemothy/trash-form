@@ -45,11 +45,12 @@
         }
 
         .logo-container {
+            margin-top: 30px;
             margin-bottom: 20px;
         }
 
         .logo {
-            max-width: 200px;
+            max-width: 300px;
             height: auto;
             background: transparent;
         }
@@ -389,7 +390,7 @@
             }
 
             .logo {
-                max-width: 150px;
+                max-width: 220px;
             }
         }
     </style>
@@ -400,8 +401,6 @@
             <div class="logo-container">
                 <img src="{{ url_for('static', filename='logo.png') }}" alt="RecycleBnB Logo" class="logo">
             </div>
-            <h1>♻️ RecycleBnB</h1>
-            <p>Smart recycling assistant</p>
         </div>
 
         <div class="upload-card">
@@ -466,6 +465,13 @@
         function handleFile(file) {
             if (!file.type.startsWith('image/')) {
                 showError('Please select a valid image file.');
+                return;
+            }
+
+            // Check for supported image formats
+            const supportedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+            if (!supportedFormats.includes(file.type.toLowerCase())) {
+                showError('Unsupported image format. Please select a JPG, PNG, or WebP image.');
                 return;
             }
 
