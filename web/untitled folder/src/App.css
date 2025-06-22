@@ -1,42 +1,36 @@
+/* Modern full-page background and layout for the app */
+body, #root {
+  min-height: 100vh;
+  min-width: 100vw;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: linear-gradient(120deg, #e3f0ff 0%, #f6faff 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Remove card and logo styles if not used */
+.card, .logo, .logo.react, .read-the-docs {
+  display: none !important;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Responsive tweaks for the uploader */
+@media (max-width: 700px) {
+  .modern-uploader-container {
+    padding: 16px !important;
+    max-width: 98vw !important;
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }
