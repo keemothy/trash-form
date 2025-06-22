@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecycleBnB - Smart Recycling Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Airbnb Design System Colors & Typography */
+        :root {
+            --airbnb-red: #FF5A5F;
+            --airbnb-teal: #00A699;
+            --airbnb-orange: #FC642D;
+            --airbnb-gray-dark: #484848;
+            --airbnb-gray-light: #767676;
+            --airbnb-gray-lightest: #F7F7F7;
+            --border-radius: 12px;
+            --shadow-light: 0 2px 16px rgba(0,0,0,0.12);
+            --shadow-hover: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--airbnb-gray-dark);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .upload-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .upload-zone {
+            border: 3px dashed #ddd;
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--airbnb-red);
+            background: rgba(255, 90, 95, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--airbnb-gray-light);
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--airbnb-gray-dark);
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            color: var(--airbnb-gray-light);
+            font-size: 0.9rem;
+        }
+
+        .preview-container {
+            margin: 20px 0;
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn {
+            background: var(--airbnb-red);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+
+        .btn:hover {
+            background: #E74C3C;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: var(--airbnb-gray-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-container {
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .result-header {
+            padding: 24px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .material-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .material-icon {
+            font-size: 2.5rem;
+        }
+
+        .material-details h3 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .confidence-badge {
+            background: var(--airbnb-teal);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .locations-section {
+            padding: 24px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .center-card {
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .center-card:hover {
+            border-color: var(--airbnb-red);
+            box-shadow: var(--shadow-light);
+        }
+
+        .center-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .center-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .center-rating {
+            color: var(--airbnb-teal);
+            font-weight: 600;
+        }
+
+        .center-address {
+            color: var(--airbnb-gray-light);
+            margin-bottom: 8px;
+        }
+
+        .center-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .refund-highlight {
+            background: var(--airbnb-teal);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .insights-section {
+            background: var(--airbnb-gray-lightest);
+            padding: 24px;
+        }
+
+        .tip-card {
+            background: white;
+            border-left: 4px solid var(--airbnb-orange);
+            padding: 20px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin-bottom: 16px;
+        }
+
+        .tip-title {
+            font-weight: 600;
+            color: var(--airbnb-orange);
+            margin-bottom: 8px;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 40px;
+            color: var(--airbnb-gray-light);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--airbnb-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 16px;
+            border-radius: var(--border-radius);
+            border-left: 4px solid #c62828;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .upload-card {
+                padding: 24px 16px;
+            }
+            
+            .center-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>♻️ RecycleBnB</h1>
+            <p>Smart recycling assistant</p>
+        </div>
+
+        <div class="upload-card">
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">Drop your photo here or click to browse</div>
+                <div class="upload-subtext">Supports JPG, PNG, WebP up to 10MB</div>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            </div>
+            
+            <div class="preview-container" id="previewContainer">
+                <img id="preview" class="preview-image" alt="Preview">
+            </div>
+            
+            <button class="btn" id="analyzeBtn" disabled>
+                <i class="fas fa-search"></i> Analyze Item
+            </button>
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <!-- Results will be populated here -->
+        </div>
+    </div>
+
+    <script>
+        const uploadZone = document.getElementById('uploadZone');
+        const imageInput = document.getElementById('imageInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const preview = document.getElementById('preview');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        // File upload handling
+        uploadZone.addEventListener('click', () => imageInput.click());
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showError('Please select a valid image file.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                preview.src = e.target.result;
+                previewContainer.style.display = 'block';
+                analyzeBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        analyzeBtn.addEventListener('click', async () => {
+            if (!imageInput.files.length) return;
+
+            showLoading();
+            
+            const formData = new FormData();
+            formData.append('image', imageInput.files[0]);
+
+            try {
+                const response = await fetch('http://127.0.0.1:9000/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Analysis failed');
+                
+                const data = await response.json();
+                showResults(data);
+            } catch (error) {
+                showError('Analysis failed: ' + error.message);
+            }
+        });
+
+        function showLoading() {
+            resultsContainer.style.display = 'block';
+            resultsContainer.innerHTML = `
+                <div class="result-card">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Analyzing your item...</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            resultsContainer.style.display = 'block';
+            resultsContainer.innerHTML = `
+                <div class="result-card">
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i> ${message}
+                    </div>
+                </div>
+            `;
+        }
+
+        function showResults(data) {
+            const { identification, locations, insights } = data;
+            
+            resultsContainer.innerHTML = `
+                <!-- Material Identification -->
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="material-info">
+                            <div class="material-icon" style="color: ${identification.color}">
+                                ${identification.icon}
+                            </div>
+                            <div class="material-details">
+                                <h3>${identification.material}</h3>
+                                <span class="confidence-badge">${identification.confidence} confident</span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 16px; color: var(--airbnb-gray-light);">
+                            ${identification.message}
+                        </p>
+                    </div>
+                    
+                    <!-- Recycling Centers -->
+                    <div class="locations-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Nearby Recycling Centers
+                        </h3>
+                        ${locations.nearest_centers.map(center => `
+                            <div class="center-card">
+                                <div class="center-header">
+                                    <div>
+                                        <div class="center-name">${center.name}</div>
+                                        <div class="center-rating">
+                                            ${center.distance} miles
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="center-address">
+                                    <i class="fas fa-map-marker-alt"></i> ${center.address}
+                                </div>
+                                <div class="center-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>${center.hours}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-phone"></i>
+                                        <span>${center.phone}</span>
+                                    </div>
+                                    ${center.refund_rate > 0 ? `
+                                        <div class="detail-item">
+                                            <i class="fas fa-dollar-sign"></i>
+                                            <span class="refund-highlight">$${center.refund_rate.toFixed(2)}/lb</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <!-- Sustainability Insights -->
+                    <div class="insights-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-lightbulb"></i>
+                            Sustainability Tips
+                        </h3>
+                        
+                        <div class="tip-card">
+                            <div class="tip-title">💡 Did You Know?</div>
+                            <p>${insights.tip}</p>
+                        </div>
+                        
+                        <div class="tip-card">
+                            <div class="tip-title">✅ Action Required</div>
+                            <p>${insights.action_required}</p>
+                        </div>
+                        
+                        <div class="tip-card">
+                            <div class="tip-title">🏆 Best Practice</div>
+                            <p>${insights.best_practice}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

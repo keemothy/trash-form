@@ -112,3 +112,4 @@ cython_debug/
 
 # Node
 node_modules/
+.env
