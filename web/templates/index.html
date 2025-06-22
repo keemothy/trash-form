@@ -417,6 +417,21 @@
                 <img id="preview" class="preview-image" alt="Preview">
             </div>
             
+            <!-- Location Selector -->
+            <div class="location-selector" style="margin: 20px 0;">
+                <label for="locationSelect" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--airbnb-gray-dark);">Choose your location:</label>
+                <select id="locationSelect" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: var(--border-radius); font-size: 1rem; background: white;">
+                    <option value="">Auto-detect from IP</option>
+                    <option value="davis">Davis, California</option>
+                    <option value="san francisco">San Francisco, California</option>
+                    <option value="new york">New York, New York</option>
+                    <option value="seattle">Seattle, Washington</option>
+                    <option value="portland">Portland, Oregon</option>
+                    <option value="austin">Austin, Texas</option>
+                    <option value="denver">Denver, Colorado</option>
+                </select>
+            </div>
+            
             <button class="btn" id="analyzeBtn" disabled>
                 <i class="fas fa-search"></i> Analyze Item
             </button>
@@ -434,6 +449,7 @@
         const preview = document.getElementById('preview');
         const analyzeBtn = document.getElementById('analyzeBtn');
         const resultsContainer = document.getElementById('resultsContainer');
+        const locationSelect = document.getElementById('locationSelect');
 
         // File upload handling
         uploadZone.addEventListener('click', () => imageInput.click());
@@ -491,6 +507,12 @@
             
             const formData = new FormData();
             formData.append('image', imageInput.files[0]);
+            
+            // Add selected location if any
+            const selectedLocation = locationSelect.value;
+            if (selectedLocation) {
+                formData.append('location', selectedLocation);
+            }
 
             try {
                 const response = await fetch('http://127.0.0.1:9000/predict', {

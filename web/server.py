@@ -131,14 +131,72 @@ def get_location_from_ip():
     except:
         pass
     
-    # Default to San Francisco if IP location fails
+    # Default to Davis, California for testing
     return {
-        'city': 'San Francisco',
+        'city': 'Davis',
         'region': 'California',
         'country': 'United States',
-        'lat': 37.7749,
-        'lng': -122.4194
+        'lat': 38.5449,
+        'lng': -121.7405
     }
+
+def get_location_by_city(city_name):
+    """Get location coordinates by city name"""
+    # Predefined locations for testing
+    locations = {
+        'davis': {
+            'city': 'Davis',
+            'region': 'California',
+            'country': 'United States',
+            'lat': 38.5449,
+            'lng': -121.7405
+        },
+        'san francisco': {
+            'city': 'San Francisco',
+            'region': 'California', 
+            'country': 'United States',
+            'lat': 37.7749,
+            'lng': -122.4194
+        },
+        'new york': {
+            'city': 'New York',
+            'region': 'New York',
+            'country': 'United States',
+            'lat': 40.7128,
+            'lng': -74.0060
+        },
+        'seattle': {
+            'city': 'Seattle',
+            'region': 'Washington',
+            'country': 'United States',
+            'lat': 47.6062,
+            'lng': -122.3321
+        },
+        'portland': {
+            'city': 'Portland',
+            'region': 'Oregon',
+            'country': 'United States',
+            'lat': 45.5152,
+            'lng': -122.6784
+        },
+        'austin': {
+            'city': 'Austin',
+            'region': 'Texas',
+            'country': 'United States',
+            'lat': 30.2672,
+            'lng': -97.7431
+        },
+        'denver': {
+            'city': 'Denver',
+            'region': 'Colorado',
+            'country': 'United States',
+            'lat': 39.7392,
+            'lng': -104.9903
+        }
+    }
+    
+    city_key = city_name.lower().strip()
+    return locations.get(city_key, locations['davis'])  # Default to Davis
 
 def get_recycling_centers_with_claude(material_type, location_info):
     """Find real recycling centers using Claude API"""
@@ -335,7 +393,11 @@ def predict():
         material_info = MATERIAL_MAPPING[pred_class]
         
         # Get user location
-        location_info = get_location_from_ip()
+        selected_location = request.form.get('location', '').strip()
+        if selected_location:
+            location_info = get_location_by_city(selected_location)
+        else:
+            location_info = get_location_from_ip()
         
         # Get nearby recycling centers using Claude API
         centers = get_recycling_centers_with_claude(pred_class, location_info)
