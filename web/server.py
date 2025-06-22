@@ -80,7 +80,7 @@ MATERIAL_MAPPING = {
         'carbon_per_kg': {'saved': 15.2, 'landfill': 6.8},
         'typical_weight_kg': 0.4,  # typical t-shirt
         'size_multipliers': {'small': 0.4, 'medium': 1.0, 'large': 2.2}
-    },
+    },  
     'glass_training_set': {
         'display_name': 'Glass',
         'icon': '🍷',
